@@ -1,5 +1,6 @@
 {
   "name": "mds-data-fetcher",
+  "homepage": "https://ex-nihilo-consult.github.io/mds-data-fetcher/",
   "private": true,
   "version": "0.0.0",
   "type": "module",
