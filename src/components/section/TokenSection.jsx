@@ -9,7 +9,7 @@ const TokenSection = ({ fetchNewData, tokenInputRef }) => {
       <input
         className="font-mono border-2 border-neutral-800 bg-neutral-900/80 font-white focus:border-neutral-600 focus:outline-none"
         type="text"
-        // Input in uncontrolled to prevent re-renders
+        // Input is uncontrolled to prevent re-renders
         ref={tokenInputRef}
       />
       <ButtonPanel>

@@ -97,6 +97,17 @@ export default function MdsFetcher() {
         <span className="text-mdslime">MDS</span> Data Fetcher
       </div>
 
+      <div>
+        Source:{" "}
+        <a
+          href="https://github.com/Ex-Nihilo-Consult/mds-data-fetcher"
+          target="_blank"
+          className="hover:text-mdslime"
+        >
+          https://github.com/Ex-Nihilo-Consult/mds-data-fetcher
+        </a>
+      </div>
+
       <div className="flex flex-col gap-18">
         <TokenSection
           fetchNewData={fetchNewData}

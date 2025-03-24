@@ -1,5 +1,7 @@
 import Papa from "papaparse";
 
+const KEY_COLUMNS = ["MDS record link", "Collection name"];
+
 const appendValue = (outputRecord, value, outputKey) => {
   if (outputRecord[outputKey]) {
     outputRecord[outputKey] = outputRecord[outputKey] + ";" + value;
@@ -9,14 +11,16 @@ const appendValue = (outputRecord, value, outputKey) => {
 };
 
 const recursiveAppend = (outputRecord, attribute, parentLabel) => {
+  // Always append value, regardless of if item is a parent or leaf
   appendValue(outputRecord, attribute.value, parentLabel);
 
-  // base case - no units
+  // Base case: no nested units array
   if (!Array.isArray(attribute.units)) {
     return;
   }
 
   attribute.units.forEach((nestedAttribute) => {
+    // Show full hierarchy with column label
     const label = `${parentLabel}>${nestedAttribute.label}`;
     recursiveAppend(outputRecord, nestedAttribute, label);
   });
@@ -37,8 +41,10 @@ const jsonToCsv = (jsonData, simplify) => {
 
     entry.attributes.forEach((column) => {
       if (!simplify) {
+        // Add all units, including nested
         recursiveAppend(dataObj, column, column.label);
       } else {
+        // Consistent with clicking "Download as CSV" in the MDS Object Search
         if (column.label === "Object Number") {
           appendValue(dataObj, column.value, "Object number");
         } else if (column.label === "Object Name") {
@@ -55,8 +61,6 @@ const jsonToCsv = (jsonData, simplify) => {
 
   // Get full list of columns
   if (!simplify) {
-    const KEY_COLUMNS = ["MDS record link", "Collection name"];
-
     const columnNameSet = new Set();
     values.forEach((value) => {
       Object.keys(value).forEach((columnName) => {
@@ -64,7 +68,7 @@ const jsonToCsv = (jsonData, simplify) => {
       });
     });
 
-    // Key cols at first then rest alphabetically
+    // Key columns first then rest alphabetically
     const orderedColumns = [
       ...KEY_COLUMNS,
       ...Array.from(columnNameSet).sort(),
