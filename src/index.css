@@ -1,7 +1,7 @@
 @import "tailwindcss";
 
 @theme {
-  --color-mdslime: rgb(176, 255, 0);
+  --color-mdslime: #b0ff00;
 }
 
 :root {

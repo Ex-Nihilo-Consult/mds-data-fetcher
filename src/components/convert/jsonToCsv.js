@@ -26,7 +26,7 @@ const recursiveAppend = (outputRecord, attribute, parentLabel) => {
   });
 };
 
-const jsonToCsv = (jsonData, simplify) => {
+const jsonToCsvValues = (jsonData, simplify) => {
   const data = jsonData.map((entry) => ({
     uid: entry["@admin"].uid,
     organization: entry["@admin"].data_source.organisation,
@@ -59,6 +59,10 @@ const jsonToCsv = (jsonData, simplify) => {
     values.push(dataObj);
   });
 
+  if (!values.length) {
+    return { values: [], columns: [] };
+  }
+
   // Get full list of columns
   if (!simplify) {
     const columnNameSet = new Set();
@@ -74,13 +78,48 @@ const jsonToCsv = (jsonData, simplify) => {
       ...Array.from(columnNameSet).sort(),
     ];
 
-    return Papa.unparse(values, {
-      columns: orderedColumns,
-    });
+    return { values: values, columns: orderedColumns };
   }
 
   // Use keys from first object since all the same and already ordered
-  return Papa.unparse(values);
+  return { values: values, columns: Object.keys(values[0]) };
 };
 
-export default jsonToCsv;
+// JSON to column counts together with default checkbox selection state for convenience
+export const jsonToCsvCounts = (jsonData) => {
+  const unparsedData = jsonToCsvValues(jsonData, false);
+
+  const unparsedDataCounts = {};
+  unparsedData.columns.forEach((columnName) => {
+    unparsedDataCounts[columnName] = 0;
+  });
+  unparsedData.values.forEach((row) => {
+    Object.entries(row).forEach(([key, value]) => {
+      if (value !== "" && value !== null) {
+        unparsedDataCounts[key] = unparsedDataCounts[key] + 1;
+      }
+    });
+  });
+
+  return Object.entries(unparsedDataCounts).map(([key, value]) => ({
+    key: key,
+    count: value,
+    include: true, // default to checked
+  }));
+};
+
+// JSON to CSV string
+export const jsonToCsv = (jsonData, simplify, columns = null) => {
+  const csvValues = jsonToCsvValues(jsonData, simplify);
+
+  const csvColumns =
+    // If no columns checked then include them all, rather than an empty file
+    columns && Array.isArray(columns) && columns.length > 0
+      ? columns
+      : csvValues.columns;
+
+  return Papa.unparse(csvValues.values, {
+    // Override the included columns if provided, else use them all
+    columns: csvColumns,
+  });
+};

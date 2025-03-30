@@ -2,7 +2,10 @@ import { useState, useRef } from "react";
 
 import OutputSection from "./section/OutputSection";
 import TokenSection from "./section/TokenSection";
-import jsonToCsv from "./convert/jsonToCsv";
+import Papa from "papaparse";
+import { jsonToCsvCounts, jsonToCsv } from "./convert/jsonToCsv";
+import MdsButton from "./button/MdsButton";
+import ColumnSelector from "./section/ColumnSelector";
 
 export default function MdsFetcher() {
   // Input in uncontrolled to prevent re-renders
@@ -11,6 +14,29 @@ export default function MdsFetcher() {
   const [fetchedJson, setFetchedJson] = useState("");
   const [error, setError] = useState("");
   const [progress, setProgress] = useState({ remaining: 0, total: 0 });
+  const [includedFields, setIncludedFields] = useState([]);
+
+  const toggleField = (key) => {
+    setIncludedFields((prev) =>
+      prev.map((row) => {
+        if (row.key === key) {
+          return { ...row, include: !row.include };
+        } else {
+          return row;
+        }
+      })
+    );
+  };
+
+  const selectAllFields = () => {
+    setIncludedFields((prev) => prev.map((row) => ({ ...row, include: true })));
+  };
+
+  const deselectAllFields = () => {
+    setIncludedFields((prev) =>
+      prev.map((row) => ({ ...row, include: false }))
+    );
+  };
 
   const fetchData = async (resumeToken) => {
     const apiUrl = `https://mds-data-1.ciim.k-int.com/api/v1/extract?resume=${resumeToken}`;
@@ -46,14 +72,19 @@ export default function MdsFetcher() {
     if (resumeToken) {
       setError("");
       fetchData(resumeToken)
-        .then((data) => setFetchedJson(data))
+        .then((data) => {
+          setFetchedJson(data);
+          setIncludedFields(jsonToCsvCounts(data));
+        })
         .catch(() => {
-          setError("Failed to fetch. Please check that the token is valid.");
+          setError("Failed to fetch. Please check that the token is valid");
           setFetchedJson(null);
+          setIncludedFields([]);
         });
       setError("");
     } else {
       setFetchedJson(null);
+      setIncludedFields([]);
       setError("");
     }
   };
@@ -64,7 +95,10 @@ export default function MdsFetcher() {
       return jsonToCsv(fetchedJson, true);
     }
 
-    return jsonToCsv(fetchedJson, false);
+    const columns = includedFields
+      .filter((row) => row.include)
+      .map((field) => field.key);
+    return jsonToCsv(fetchedJson, false, columns);
   };
 
   const downloadCsv = (simplify) => {
@@ -89,7 +123,7 @@ export default function MdsFetcher() {
     document.body.removeChild(link);
   };
 
-  const downloadEnabled = !fetchedJson;
+  const downloadDisabled = !fetchedJson;
 
   return (
     <div className="flex flex-col p-10 gap-10 box-border">
@@ -125,19 +159,29 @@ export default function MdsFetcher() {
         <OutputSection
           label={"JSON → CSV (simplified)"}
           onDownload={() => downloadCsv(true)}
-          disabled={downloadEnabled}
+          disabled={downloadDisabled}
         />
 
-        <OutputSection
-          label={"JSON → CSV"}
-          onDownload={() => downloadCsv(false)}
-          disabled={downloadEnabled}
-        />
+        <div className="flex flex-col gap-4">
+          <OutputSection
+            label={"JSON → CSV"}
+            onDownload={() => downloadCsv(false)}
+            disabled={downloadDisabled}
+          />
+
+          <ColumnSelector
+            includedFields={downloadDisabled ? [] : includedFields}
+            toggleField={toggleField}
+            disabled={downloadDisabled}
+            selectAllFields={selectAllFields}
+            deselectAllFields={deselectAllFields}
+          />
+        </div>
 
         <OutputSection
           label={"JSON Response"}
           onDownload={downloadJson}
-          disabled={downloadEnabled}
+          disabled={downloadDisabled}
         />
       </div>
     </div>
