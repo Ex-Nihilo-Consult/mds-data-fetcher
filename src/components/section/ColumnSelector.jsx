@@ -38,7 +38,7 @@ const ColumnSelectorContainer = ({ children, onClick, isOpen, disabled }) => {
       </button>
       <div
         className={`bg-black ${
-          isOpen ? "border-solid border-2 border-neutral-800" : ""
+          isOpen ? "border-solid border-2 border-t-0 border-neutral-800" : ""
         }`}
       >
         {children}
