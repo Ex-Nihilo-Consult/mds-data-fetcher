@@ -124,9 +124,12 @@ export default function MdsFetcher() {
   const downloadDisabled = !fetchedJson;
 
   return (
-    <div className="flex flex-col p-10 gap-10 box-border">
+    <div className="flex flex-col p-10 pb-24 gap-10 box-border">
       <div className="text-4xl font-bold">
-        <span className="text-mdslime">MDS</span> Data Fetcher
+        <a href="https://museumdata.uk/object-search/" target="_blank">
+          <span className="text-mdslime">MDS</span>
+        </a>{" "}
+        Data Fetcher
       </div>
 
       <div>
