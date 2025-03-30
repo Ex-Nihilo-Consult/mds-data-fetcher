@@ -9,8 +9,8 @@ const ColumnSelectorContainer = ({ children, onClick, isOpen, disabled }) => {
         disabled={disabled}
         onClick={onClick}
         className={`w-full border-2 border-solid border-neutral-800 ${
-          isOpen ? "bg-neutral-800" : "bg-black"
-        } cursor-pointer px-5 py-3 min-w-32 flex items-center justify-between hover:bg-neutral-800 disabled:hover:bg-black disabled:border-neutral-500 disabled:text-neutral-500 disabled:cursor-not-allowed`}
+          isOpen ? "bg-black" : "bg-black"
+        } cursor-pointer px-5 py-3 min-w-32 flex items-center justify-between disabled:hover:bg-black disabled:border-neutral-800 disabled:text-neutral-500 disabled:cursor-not-allowed`}
       >
         Select fields
         <div className="w-5 h-5">
@@ -36,7 +36,13 @@ const ColumnSelectorContainer = ({ children, onClick, isOpen, disabled }) => {
           </svg>
         </div>
       </button>
-      <div className="bg-neutral-900">{children}</div>
+      <div
+        className={`bg-black ${
+          isOpen ? "border-solid border-2 border-neutral-800" : ""
+        }`}
+      >
+        {children}
+      </div>
     </div>
   );
 };
