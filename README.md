@@ -4,7 +4,7 @@ Deployed: https://ex-nihilo-consult.github.io/mds-data-fetcher/
 
 Museum Data Service (MDS) Object Search: https://museumdata.uk/object-search/
 
-MDS Swagger Docs: https://mds-data-1.ciim.k-int.com/api/swagger-ui/index.html
+MDS Swagger Docs: https://mds-data-2.ciim.k-int.com/api/swagger-ui/index.html
 
 The MDS Data Fetcher is a utility for downloading data from the MDS objects database.
 
