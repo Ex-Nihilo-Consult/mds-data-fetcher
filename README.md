@@ -4,11 +4,11 @@ Deployed: https://ex-nihilo-consult.github.io/mds-data-fetcher/
 
 Museum Data Service (MDS) Object Search: https://museumdata.uk/object-search/
 
-MDS Swagger Docs: https://mds-data-2.ciim.k-int.com/api/swagger-ui/index.html
+MDS Swagger Docs: https://api.museumdata.uk/api/swagger-ui/index.html
 
 The MDS Data Fetcher is a utility for downloading data from the MDS objects database.
 
-You must first obtain an API token for a query by clicking the "Get and API token" button below an MDS Object Search.
+You must first obtain an API token for a query by clicking the "Get an API token" text above and below MDS Object Search results.
 
 The MDS API limits JSON responses to 100 objects. To streamline larger queries, the MDS Data Fetcher appends responses from "next_url" until "has_next" is false. Very large responses may be limited by the memory allocated to your browser.
 
